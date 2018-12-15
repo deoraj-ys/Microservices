@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<typeInfoHistroy>
+<typeInfo handle="=EmployeeService/src\/main\/java&lt;com.employee.dao{EmployeeLeaveDao.java[EmployeeLeaveDao" modifiers="513" timestamp="1532410446101"/>
+<typeInfo handle="=EmployeeService/src\/main\/java&lt;com.employee.data.repository{AccountRepository.java[AccountRepository" modifiers="513" timestamp="1532691166114"/>
+<typeInfo handle="=OrganizationDepartment/src\/main\/java&lt;com.org.department.dao{DepartmentDao.java[DepartmentDao" modifiers="513" timestamp="1532929350706"/>
+<typeInfo handle="=OrganizationDepartment/C:\/Users\/Shalini\/.m2\/repository\/org\/springframework\/data\/spring-data-jpa\/2.0.8.RELEASE\/spring-data-jpa-2.0.8.RELEASE.jar&lt;org.springframework.data.jpa.repository(JpaRepository.class[JpaRepository" modifiers="1537" timestamp="1530959393189"/>
+</typeInfoHistroy>

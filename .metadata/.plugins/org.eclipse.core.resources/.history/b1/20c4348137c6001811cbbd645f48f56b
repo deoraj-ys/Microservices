@@ -1,0 +1,29 @@
+package com.web.crawler;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.web.worker.Crawler;
+
+public class CrawlerHandler {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		ExecutorService es=Executors.newFixedThreadPool(5);
+		
+		Set<String> visitedPages=new HashSet<String>();
+		Queue<String> taskQueue=new LinkedList<String>();
+		taskQueue.add("http://www.prudential.co.uk/");
+		while(taskQueue.size()>0)
+		{
+			es.execute(new Crawler(taskQueue.poll(),visitedPages, taskQueue));
+		}
+
+	}
+
+}

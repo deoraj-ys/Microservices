@@ -1,0 +1,10 @@
+# Enabling H2 Console
+spring.h2.console.enabled=${spring.h2.console.enabled}
+server.port=${server.port}
+eureka.client.fetchRegistry=${eureka.client.fetchRegistry}
+eureka.client.serviceUrl.defaultZone=${eureka.client.serviceUrl.defaultZone}
+eureka.client.registerWithEureka=${eureka.client.registerWithEureka}
+
+spring.application.name=employee
+spring.cloud.config.uri=http://localhost:8889
+

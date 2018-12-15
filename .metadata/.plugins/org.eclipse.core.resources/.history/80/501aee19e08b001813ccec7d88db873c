@@ -1,0 +1,58 @@
+package com.employee.controller;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.employee.model.Employee;
+import com.employee.model.EmployeeResponse;
+import com.employee.portal.EmployeeServiceApplication;
+
+@RestController
+@RequestMapping("/employee")
+public class EmployeeController {
+
+	private final AtomicInteger employeeid=new AtomicInteger();
+	@RequestMapping(value="/{id}",method= {RequestMethod.GET},produces= {"application/json","application/xml"})
+	@ResponseBody
+	public Employee getEmployeeById(@PathVariable(name="id",required=true) int id)
+	{
+		System.out.println("We have received your request and Workinh on it");
+		
+		Employee employee= new Employee();
+		employee.setEmployeeId(id);
+		employee.setEmployeeDeparment("CIB");
+		employee.setEmployeeDepCode("JP-CIB");
+		employee.setEmployeeDesignation("Associate-601");
+		employee.setEmployeeName("Deo Raj");
+		employee.setEmployeePhone(7815048404L);
+		employee.setEmployeeSalary(1270000);
+		employee.setEmployeeStatus("Active");
+		System.out.println("We have completed your request and snt the response");
+		return employee;
+		
+	}
+	
+	@RequestMapping(method= {RequestMethod.GET},produces= {"text/plain"})
+	@ResponseBody
+	public String welcome()
+	{
+		System.out.println("ok");
+		return "Welocome to Rest Worl";
+	}
+	
+	@RequestMapping(value= {"/create"},method= {RequestMethod.POST},consumes= {"application/xml","application/json"})
+	@ResponseBody
+	public EmployeeResponse createEmployee(@RequestBody Employee employee)
+	{
+		Integer id=employeeid.incrementAndGet();
+		employee.setEmployeeId(id.intValue());
+		EmployeeServiceApplication.employeeMap.put(id, employee);
+		
+	}
+}

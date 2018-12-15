@@ -1,0 +1,110 @@
+package com.web.worker;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Queue;
+import java.util.Set;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+public class Crawler implements Runnable{
+	
+	private Set<String> visitedPages;
+	private Queue<String> taskQueue; 	
+	private String URL;
+	public Crawler(String URL,Set<String>visitedPages,Queue<String> taskQueue)
+	{
+		this.visitedPages=visitedPages;
+		this.URL=URL;
+		this.taskQueue=taskQueue;
+		
+	}
+	public Crawler()
+	{
+		
+	}
+	
+	public void run() 
+	{
+		if(!visitedPages.contains(URL))
+		{
+			try {
+				System.out.println("Thread Name and URL =="+Thread.currentThread().getName()+"\t"+URL);
+				processPage(URL);
+			}
+			
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public   void processPage(String URL) throws Exception
+	{
+		    try {
+		    	if(!visitedPages.contains(URL))
+		    		System.out.println("Processing URL==="+URL);
+		    	{
+		     Document doc = Jsoup.connect(URL).get();
+			 Elements questions = doc.select("a[href]");
+				for(Element link: questions){					
+					//System.out.println("link.attr(\"href\")=="+link.attr("href"));
+					//System.out.println("link.attr(\"abs:href\")==="+link.attr("abs:href"));
+					if(!link.attr("href").contains("#") && isvalidLink(link.attr("abs:href")))
+					{
+						//System.out.println("adding to queue==");
+				     taskQueue.add(link.attr("abs:href"));
+				    					// processPage(link.attr("abs:href"));				
+					}
+					else
+					{
+						System.out.println("not a valid link=="+link.attr("abs:href"));
+					}
+				}
+				
+		    }	
+		    }
+	   catch(Exception e)
+	   {
+		   visitedPages.add(URL);
+	   }
+		   System.out.println("taskQueue==="+taskQueue.size());
+	   visitedPages.add(URL);	
+		
+	}
+	
+	public boolean isvalidLink(String URL) throws URISyntaxException
+	{
+		if((URL.startsWith("https") || URL.startsWith("http")) && isDomainValid(URL) ) {
+	        return true;
+		}
+		else
+			return false;
+	}
+	
+	public boolean isDomainValid(String URL) throws URISyntaxException
+	{
+		URI uri = new URI(URL);
+	    String domain = uri.getHost();
+	   // System.out.println("Domain===="+domain);
+	    if(domain.contains("prudential.co.uk") || domain.contains("prudentialcorporation-asia.com") || domain.contains("pru.co.uk")
+	    		|| domain.contains("mypru.pru.co.uk") || domain.contains("login.pru.co.uk")
+	    		)
+	    {
+	    	return true;
+	    }
+	    else
+	    	return false;
+	}
+	public static void main(String arg[]) throws Exception
+	{
+		Crawler cr=new Crawler();
+		cr.processPage("http://www.prudential.co.uk/");
+	}
+	}
+
+

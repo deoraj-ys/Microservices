@@ -1,0 +1,72 @@
+package com.employee.dao.impl;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.employee.dao.EmployeeDAO;
+import com.employee.data.repository.AccountRepository;
+import com.employee.data.repository.EmployeeRepository;
+import com.employee.model.Employee;
+import com.employee.model.EmployeeResponse;
+import com.employee.portal.EmployeeServiceApplication;
+import com.employee.util.DateFormatter;
+@Service
+public class EmployeeDAOImpl implements EmployeeDAO {
+    public DateFormatter getDateFormatter() {
+		return dateFormatter;
+	}
+
+	public void setDateFormatter(DateFormatter dateFormatter) {
+		this.dateFormatter = dateFormatter;
+	}
+
+	@Autowired
+	public EmployeeRepository employeeRepository;
+	@Autowired
+    DateFormatter dateFormatter;
+    
+	private final AtomicInteger employeeid=new AtomicInteger();
+	@Override
+	public Collection<Employee> getAllEmployee() {
+		System.out.println("ok");
+		return EmployeeServiceApplication.employeeMap.values().stream().map(item->item).collect(Collectors.toList());
+	}
+
+	@Override
+	public Employee getEmployeeById(int id) {
+		Employee employee= EmployeeServiceApplication.employeeMap.get(id);		
+		 System.out.println("We have completed your request and snt the response");
+		return employee;
+	}
+
+	@Override
+	public EmployeeResponse saveEmployee(Employee employee) {
+		// TODO Auto-generated method stub
+		Integer id=employeeid.incrementAndGet();
+		employee.setEmployeeId(id.intValue());
+		//employee.setDOB(dateFormatter.formatDate(employee.getDOB());
+		
+		EmployeeServiceApplication.employeeMap.put(id, employee);
+		return new EmployeeResponse(id.intValue(),"Created SuccessFully");
+		
+	}
+
+	@Override
+	public EmployeeResponse updateEmployee(int id, Employee employee) {
+		EmployeeServiceApplication.employeeMap.put(id,employee);
+		return new EmployeeResponse(id,"Employee Update Success");
+	}
+
+	@Override
+	public EmployeeResponse deleteEmployee(int id) {
+		EmployeeServiceApplication.employeeMap.remove(id);
+		return new EmployeeResponse(id,"Deleted Successfully");
+	}
+
+}

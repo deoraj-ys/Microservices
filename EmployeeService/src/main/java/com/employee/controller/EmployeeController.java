@@ -1,0 +1,110 @@
+package com.employee.controller;
+
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.employee.dao.EmployeeDAO;
+import com.employee.exception.EmployeeNotFoundException;
+import com.employee.model.Employee;
+import com.employee.model.EmployeeResponse;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
+import com.netflix.discovery.shared.Application;
+
+import org.springframework.web.client.RestTemplate;
+@RefreshScope
+@RestController
+@CrossOrigin(origins = "*")
+public class EmployeeController {
+
+	@Autowired
+	private EmployeeDAO employeeDAO;
+	
+
+	public EmployeeDAO getEmployeeDAO() {
+		return employeeDAO;
+	}
+
+	public void setEmployeeDAO(EmployeeDAO employeeDAO) {
+		this.employeeDAO = employeeDAO;
+	}
+	 @Value("${message:Hello default}")
+	    private String message;
+
+	@RequestMapping(value="/test" ,method= {RequestMethod.GET},produces= {"text/plain"})
+	@ResponseBody
+	public String getmessage()
+	{
+		return message;
+	}
+	
+	@RequestMapping(value="/ping" ,method= {RequestMethod.GET},produces= {"application/json"})
+	@ResponseBody
+	public String pingService()
+	{
+        if(employeeDAO.pingService())
+        	  return "Service Test is Green";
+        else
+        	return "Ping is not success,Hence Service test is Red";
+	}
+	
+	@RequestMapping(value="/{id}",method= {RequestMethod.GET},produces= {"application/json","application/xml"})
+	@ResponseBody
+	public Employee getEmployeeById(@PathVariable(name="id",required=true) Long id)
+	{
+		System.out.println("We have received your request and Workinh on it");
+		Employee employee= employeeDAO.getEmployeeById(id);
+		if(employee==null)
+		{
+			throw new EmployeeNotFoundException("Employee with ID "+id+" Not Avaialble in Our DB");
+		}
+		
+		 System.out.println("We have completed your request and snt the response");
+		return employee;
+		
+	}
+	
+	@RequestMapping(method= {RequestMethod.GET},produces= {"application/json","application/xml"})
+	@ResponseBody
+	public Collection<Employee> getAllEmployee()
+	{
+		System.out.println("ok");
+		return employeeDAO.getAllEmployee();
+	}
+	
+	@RequestMapping(value= {"/create"},method= {RequestMethod.POST},consumes= {"application/xml","application/json"})
+	@ResponseBody
+	public EmployeeResponse createEmployee(@RequestBody Employee employee)
+	{
+		
+		return employeeDAO.saveEmployee(employee);
+		
+	}
+	@RequestMapping(value="/delete/{id}",method= {RequestMethod.DELETE},consumes= {"application/xml","application/json"})
+	@ResponseBody
+	public EmployeeResponse deleteEmployee(@PathVariable(name="id",required=true) Long id)
+	{
+		
+		return employeeDAO.deleteEmployee(id);
+	}
+	
+	@RequestMapping(value="{id}",method= {RequestMethod.PUT},produces= {"application/xml","application/json"})
+	@ResponseBody
+	public EmployeeResponse updateEmployee(@PathVariable(name="id") Long id,@RequestBody Employee employee)
+	{
+		
+		
+		return employeeDAO.updateEmployee(id, employee);
+	}
+	
+}
